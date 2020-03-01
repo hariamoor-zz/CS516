@@ -1,0 +1,62 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm, commath, enumitem, quoting}
+\usepackage[margin=1cm]{geometry}
+
+\title{Programming Languages \& Compilers - Assignment 2}
+\author{Hari Amoor, NetID: hra25}
+\date{March 3, 2020}
+
+\begin{document}
+\maketitle
+
+\section*{Problem 1: Define the RD data-flow problem for the CFG given and provide the MFP solution.}
+The data-flow problem for the CFG given is defined with $I = \{a, b, c, x\}$, where $I$ is the Info domain. We approximate the family of functions $F$ that are used to propagate variables defined in $I$ with the MFP solution as follows:
+\begin{align*}
+  \text{IN}_{S0} = \emptyset \nonumber \\
+  \text{IN}_{C6} = \{a = 1, b = 2, x \text{ as user input}\} \nonumber \\
+  \text{IN}_{S1} = \{a = 1, b = 2, x \text{ as user input}\} \nonumber \\
+  \text{IN}_{S2} = \{a = 1, b = 2, x \text{ as user input}\} \nonumber \\
+  \text{IN}_{C7} = \{a = 1, a = 2, b = 2, b = 10, c = 5, x \text{ as user input}\} \nonumber \\
+  \text{IN}_{S3} = \{a = 2, b = 10, x \text{ as user input}\} \nonumber \\
+  \text{IN}_{S4} = \{a = 1, b = 2, c = 5, x \text{ as user input}\} \nonumber \\
+  \text{IN}_{S5} = \{a = 1, a = 2, b = 2, b = 11, c = 5, x \text{ as user input}\} \nonumber
+\end{align*}
+We use the \textit{join} operator, which corresponds to the union of sets, to define the underlying algebraic structure, i.e. the lattice.
+
+\section*{Problem 2: Design a data-flow framework $\text{MUST-DEF}$ as specified. Give the final MFP solution for the $\text{MUST-DEF}$ framework.}
+We define the data-flow framework for $\text{MUST-DEF}$ as follows:
+\begin{align*}
+  \text{INFO}_{\text{IN}}(v) = \wedge_{p \in \text{PRED}(v)}(\text{INFO}_{\text{OUT}}(p)) \nonumber \\
+  \text{INFO}_{\text{OUT}}(v) = (\text{INFO}_{\text{IN}}(v) \setminus KILL(v)) \cup GEN(v) \nonumber
+\end{align*}
+We specify $\wedge = \cap$, the operator for intersection between sets. We provide the MFP solution of the $\text{MUST-DEF}$ data-flow problem for \textit{foo} as follows:
+\begin{align*}
+  \text{IN}_{S0} = \emptyset \nonumber \\
+  \text{IN}_{C6} = \{a, b, x\} \nonumber \\
+  \text{IN}_{S2} = \{a, b, x\} \nonumber \\
+  \text{IN}_{S2} = \{a, b, x\} \nonumber \\
+  \text{IN}_{C7} = \{a, b, x\} \nonumber \\
+  \text{IN}_{S3} = \{a, b, x\} \nonumber \\
+  \text{IN}_{S4} = \{a, b, c, x\} \nonumber \\
+  \text{IN}_{S5} = \{a, b, x\} \nonumber
+\end{align*}
+We observe that, in the case that $x \geq 100$, $c$ is not well-defined. Thus, the given procedure is unsafe, as $S5$ uses $c$ without necessarily defining it.
+
+\section*{Problem 3: Consider the following.}
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Describe how you would compute MAY-USE and MAY-DEF and provide $\text{MAY-USE}(foo)$ and $\text{MAY-DEF}(foo)$.} \\
+  \newline
+  We provide definitions for MAY-USE and MAY-DEF as follows:
+  \begin{align*}
+    \text{INFO}_{\text{MAY-USE}}(v) = \wedge_{p \in \text{PRED}(v)} READ(v) \nonumber \\
+    \text{INFO}_{\text{MAY-DEF}}(v) = \wedge_{p \in \text{PRED}(v)} WRITE(v) \nonumber
+  \end{align*}
+  Here, READ and WRITE are operators to describe the variables read/written in a block $v$ respectively, and $\wedge = \cup$. \\
+  \newline
+  Furthermore, $\text{MAY-USE}(foo) = \text{MAY-DEF}(foo) = \{a, b, c, x\}$. In particular, all of the variables in the procedure \textit{may be} read or written.
+\item \textbf{How would the answer change if you instead used MUST-USE and MUST-DEF?} \\
+  \newline
+  As stated previously, in the case that $x \geq 100$, the variable $c$ is read from but never written to or otherwise initialized. Therefore, $\text{MUST-USE}(foo) = \{a, b, c, x\}$ and $\text{MUST-DEF}(foo) = \{a, b, x\}$.
+\end{enumerate}
+
+\end{document}
