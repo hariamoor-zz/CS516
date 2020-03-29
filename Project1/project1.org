@@ -1,0 +1,36 @@
+#+TITLE: Programming Languages and Compilers (CS516) - Project #1
+#+AUTHOR: Hari Amoor
+#+DATE: April 1, 2020
+#+EMAIL: amoor.hari@rutgers.edu
+
+* Introduction
+
+In the theory of programming languages, concurrency is a property exhibited by certain algorithms that allow individual parts, or /contexts/, to execute in an arbitrary order and still procure a correct result. Concurrency can be conceptualized
+both as a formalized theory of computation, i.e. with [[https://arxiv.org/vc/arxiv/papers/1008/1008.1459v8.pdf][the actor model]], as well as a criterion for optimization by an optimizing compiler. This paper explores the latter, in particular by exploring the following questions:
+
+Given a synchronous program, how can an optimizing compiler output an equivalent program with the maximum degree of concurrency possible? Moreover, what are the tradeoffs between different /runtimes/ for concurrency? How does a program
+that exploits hardware-level concurrency, i.e. by utilizing a graphical processing unit (GPU), differ from a program that utilizes concurrency at the operating system level?
+
+We analyze the supplied Quickshift program, which is intended to /smoothen/ an input image w.r.t. hyperparameters $\sigma$ and $\tau$. The program is capable of either running synchronously on a single CPU thread or asynchronously,
+using either a concurrency backend provided by the C++ OpenMP library or one backed by a 256-core GPU. Particularly, we explore the tradeoff necessitated by each concurrency runtime in terms of execution time and power consumption.
+
+* Background and Initial Insights
+
+Naturally, the synchronous program runtime backed by a single CPU thread is the simplest to predict and conceptualize. With this, only a single CPU core can be utilized at a single point in time; thus, it is clear that
+execution time will grow linearly w.r.t. the parameters $\sigma$ and $\tau$. Furthermore, we hypothesize that only a constant factor of power can be consumed relative to the hyperparameters, given that a single core likely 
+cannot consume more than a fixed amount of power.
+
+The OpenMP concurrency runtime, on the other hand, provides C++ `#pragma` directives that enable multithreading, i.e. with the POSIX thread API. This runtime enables computation on multiple CPU cores. Thus, we hypothesize that
+the program's use of the OpenMP runtime will result in a greater consumption of power than that with a single CPU thread. Naturally, it can be expected for use of multiple CPU cores to result in a greater factor of power consumption;
+it is also reasonable to expect a decreased factor of growth in execution time.
+
+The most unique runtime, and also the least predictable, is left as that backed by the 256-core GPU. Naturally, there can only be a fixed amount of power that a single GPU, regardless of the number of cores, can consume; however,
+it is unclear what that threshold is or at what point an increase in hyperparameter values will stop resulting in increased power consumption.
+
+* Experiment Design
+
+* Analysis of Execution Time
+
+* Analysis of Power Consumption
+
+* Conclusion
