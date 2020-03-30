@@ -20,7 +20,7 @@ Naturally, the synchronous program runtime backed by a single CPU thread is the 
 execution time will grow linearly w.r.t. the parameters $\sigma$ and $\tau$. Furthermore, we hypothesize that only a constant factor of power can be consumed relative to the hyperparameters, given that a single core likely 
 cannot consume more than a fixed amount of power.
 
-The OpenMP concurrency runtime, on the other hand, provides C++ `#pragma` directives that enable multithreading, i.e. with the POSIX thread API. This runtime enables computation on multiple CPU cores. Thus, we hypothesize that
+The OpenMP concurrency runtime, on the other hand, provides C++ ~#pragma~ directives that enable multithreading, i.e. with the POSIX thread API. This runtime enables computation on multiple CPU cores. Thus, we hypothesize that
 the program's use of the OpenMP runtime will result in a greater consumption of power than that with a single CPU thread. Naturally, it can be expected for use of multiple CPU cores to result in a greater factor of power consumption;
 it is also reasonable to expect a decreased factor of growth in execution time.
 
@@ -28,6 +28,15 @@ The most unique runtime, and also the least predictable, is left as that backed 
 it is unclear what that threshold is or at what point an increase in hyperparameter values will stop resulting in increased power consumption.
 
 * Experiment Design
+
+We design an experiment to analyze execution time and power of the Quickshift program in each the [single-threaded] CPU mode, the [multi-threaded] OpenMP mode, and the GPU mode. The program was run for each provided PNM image for
+each $(\sigma, \tau) \in \{(3i, 5i) \mid i \in 1 \ldots 5\}$, and each data point was taken as the average of five separate trials.
+
+Execution time was output through by the Quickshift program through ~stdout~, and power was measured with the provided ~PowerStrip.sh~ script. The power measurements were taken as the maximum measured power consumption throughout
+the duration of the program's runtime.
+
+The goal of the experiment is to observe the real-time behavior of the Quickshift program relative to the hypothesis provided in (2). In particular, we seek to validate the hypothesis that concurrency reduces the execution time of
+a program, with the tradeoff of increased power consumption; the degree to which this effect is amplified is specific to the concurrency runtime used by the application in question.
 
 * Analysis of Execution Time
 
