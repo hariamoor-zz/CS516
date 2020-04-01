@@ -27,6 +27,9 @@ it is also reasonable to expect a decreased factor of growth in execution time.
 The most unique runtime, and also the least predictable, is left as that backed by the 256-core GPU. Naturally, there can only be a fixed amount of power that a single GPU, regardless of the number of cores, can consume; however,
 it is unclear what that threshold is or at what point an increase in hyperparameter values will stop resulting in increased power consumption.
 
+We hypothesize that heightened degrees of parallelism reuslt in a decrease in execution time at the tradeoff of
+an increase in power consumption, though at most by a constant factor.
+
 * Experiment Design
 
 We design an experiment to analyze execution time and power of the Quickshift program in each the [single-threaded] CPU mode, the [multi-threaded] OpenMP mode, and the GPU mode. The program was run for each provided PNM image for
@@ -40,6 +43,58 @@ a program, with the tradeoff of increased power consumption; the degree to which
 
 * Analysis of Execution Time
 
+As specified in (3), the execution time was measured for various sets of hyperparameters by the Quickshift program
+itself. We present Figure 1, which specifies time taken for execution across each mode for each set of hyperparameters.
+
+#+CAPTION: Execution time by mode of parallelism for each set of hyperparameters
+#+NAME: Figure 1
+[[./images/time_chart.jpg]]
+
+We observe that, while execution time grows exponentially w.r.t. the hyperparameters in CPU mode, it grows
+quadratically at best in OMP mode and linearly at best in GPU mode.
+
+Theoretically, the hyperparameters could be increased to a point where a single growth rate would persist across 
+all modes, since each degree of parallelism conjecturally only reduces execution time by a constant factor; however, at that
+point, the result would not be meaningful relative to the purpose of the Quickshift program. Thus, it is true
+w.l.o.g. that each degree of parallelism is an order of magnitude /faster/ w.r.t. execution time than the last.
+
 * Analysis of Power Consumption
 
+Furthermore, we analyze power consumption across modes. We present Figure 2, which specifies the aforementioned.
+
+#+CAPTION: Power consumption (watts) by mode of parallelism for each set of hyperparameters
+#+NAME: Figure 2
+[[./images/power_chart.jpg]]
+
+Here, we observe a trend that is similar to the inverse of that observed in (4). Power consumption in CPU mode
+is roughly constant at about 5-6 watts, and also constant, albeit at the slightly higher threshold of 8-9 watts,
+in OMP mode. However, in GPU mode, power consumption is roughly logarithmic, though with a high initial growth
+rate.
+
+* Analysis of Energy Consumption
+
+Finally, we analyze energy consumption across modes of parallelism. Energy is measured in general as the (Riemann)
+integral of the program's power function, so we will naturally expect a correlation between energy consumption
+and each of execution time and power consumption.
+
+We present Figure 3, which details the energy consumption of the Quickshift program in each mode of parallelism.
+
+#+CAPTION: Energy consumption (millisecond-watts) by mode of parallelism for each set of hyperparameters
+#+NAME: Figure 3
+[[./images/energy_chart.jpg]]
+
+We observe that energy consumption grows non-trivially for each mode of parallelism. However, each mode of
+parallelism is shown to have less magnitude than the last by at least a constant factor.
+
 * Conclusion
+
+The result observed in Figure 3 validates our hypothesis in (2) that heightened degrees of parallelism
+result in a decrease in execution time and an increase in power consumption by at most a constant factor.
+
+However, the absolute decrease in energy consumption by heightened modes of parallelism is insufficient to say
+that utilization of heightened degrees of parallelism result in strictly more /performant/ programs. This is
+specifically true in the case of power-constrained devices, e.g. smartphones and embedded systems.
+
+Nonetheless, this experiment makes clear the tradeoff in performance made by the introduction of heightened
+modes of parallelism; execution time and energy consumption are observed to decrease by some constant factor,
+at the cost of increase in power consumption that is also by a constant factor.
