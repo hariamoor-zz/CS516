@@ -1,0 +1,8 @@
+#+TITLE: Programming Languages and Compilers (CS516) - Homework #3
+#+AUTHOR: Hari Amoor
+#+DATE: April 1, 2020
+#+EMAIL: amoor.hari@rutgers.edu
+
+* For each of the following loops, specify the nature of each loop dependency (if any).
+  1) Here, the statement $S$ defined as ~A(2i) = A(i) + 1~ has a true dependence on itself. We supply direction vector $\begin{bmatrix} < \end{bmatrix}$, but we cannot supply a distance vector due to the inconsistency of the dependency.
+  2) Here, the statement $S$ defined as ~A(2i) = A(7i) + 1~ has an anti-dependence on itself. We supply direction vector $\begin{bmatrix} < \end{bmatrix}$,but we cannot supply a distance vector due to the inconsistency of the dependency. 
