@@ -5,4 +5,16 @@
 
 * For each of the following loops, specify the nature of each loop dependency (if any).
   1) Here, the statement $S$ defined as ~A(2i) = A(i) + 1~ has a true dependence on itself. We supply direction vector $\begin{bmatrix} < \end{bmatrix}$, but we cannot supply a distance vector due to the inconsistency of the dependency.
-  2) Here, the statement $S$ defined as ~A(2i) = A(7i) + 1~ has an anti-dependence on itself. We supply direction vector $\begin{bmatrix} < \end{bmatrix}$,but we cannot supply a distance vector due to the inconsistency of the dependency. 
+  2) Here, the statement $S$ defined as ~A(2i) = A(7i) + 1~ has an anti-dependence on itself. We supply direction vector $\begin{bmatrix} < \end{bmatrix}$, but we cannot supply a distance vector due to the inconsistency of the dependency.
+  3) Here, the given algorithm does not have any loop dependencies.
+  4) Here, the statement $S$ defined as ~A(i) = A(10 - i) - 5~ has a true dependence on itself. We supply direction vector $\begin{bmatrix} < \end{bmatrix}$, but we cannot supply a distance vector.
+  5) Here, the statement ~A(i, j) = 2A(i - 1, j + 3)~ has an anti dependence on itself. We supply distance vector $\begin{bmatrix} < & > \end{bmatrix}$ and direction vector $\begin{bmatrix} 1 & -3 \end{bmatrix}$.
+  6) Let $S$ be the statement ~A(i) = ...~ and $T$ be the statement ~... = A(j + 1)~. $T$ has a true dependence on $S$ with direction vector $\begin{bmatrix} < & > \end{bmatrix}$ and distance vector $\begin{bmatrix} 1 & -1 \end{bmatrix}$.
+  7) Let $S$ be the statement ~A(i) = ...~ and $T$ be the statement ~... = A(j + i)~. $S$ has a loop-independent dependence on $T$; thus, any direction or distance vector would be vacuous.
+  8) By the Theorem of Simple Dependence Testing (Lecture 15, Slides 12-13), the instruction ~A(i, j, i) = 2A(i, j+1, i-1)~ has a dependency iff there exists $(i, j) \in I$ s.t. the following are satisfied (they clearly are not):
+\begin{align}
+  i = i \nonumber \\
+  j = j + 1 \nonumber \\
+  i = i - 1 \nonumber
+\end{align}
+
