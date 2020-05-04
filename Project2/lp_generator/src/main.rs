@@ -1,5 +1,12 @@
+use std::fs::File;
 use std::path::PathBuf;
 use structopt::StructOpt;
+
+use serde_xml_rs::from_reader;
+use std::error::Error;
+
+mod resource;
+use resource::Resource;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -9,7 +16,7 @@ use structopt::StructOpt;
 struct Opt {
     // Execution resource budget provided by user
     #[structopt(long)]
-    budget: f32,
+    budget: f64,
 
     // Path to input XML file
     #[structopt(long)]
@@ -22,7 +29,12 @@ struct Opt {
     app: PathBuf,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let opt = Opt::from_args();
-    println!("{:?}", opt);
+    // println!("Command-line options are: {:?}", opt);
+
+    let resource: Resource = from_reader(File::open(&opt.xml)?)?;
+    println!("Resource is: {:#?}", resource);
+
+    Ok(())
 }
