@@ -1,0 +1,94 @@
+% Created 2020-04-14 Tue 19:30
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Hari Amoor}
+\date{April 1, 2020}
+\title{Programming Languages and Compilers (CS516) - Homework \#3}
+\hypersetup{
+ pdfauthor={Hari Amoor},
+ pdftitle={Programming Languages and Compilers (CS516) - Homework \#3},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.0.50 (Org mode 9.3.6)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{For each of the following loops, specify the nature of each loop dependency (if any).}
+\label{sec:orgc0621d1}
+\begin{itemize}
+\item Here, the statement \(S\) defined as \texttt{A(2i) = A(i) + 1} has a true dependence on itself. We supply direction vector \(\begin{bmatrix} < \end{bmatrix}\), but we cannot supply a distance vector due to the inconsistency of the dependency.
+\item Here, the statement \(S\) defined as \texttt{A(2i) = A(7i) + 1} has an anti-dependence on itself. We supply direction vector \(\begin{bmatrix} < \end{bmatrix}\), but we cannot supply a distance vector due to the inconsistency of the dependency.
+\item Here, the given algorithm does not have any loop dependencies.
+\item Here, the statement \(S\) defined as \texttt{A(i) = A(10 - i) - 5} has a true dependence on itself. We supply direction vector \(\begin{bmatrix} < \end{bmatrix}\), but we cannot supply a distance vector.
+\item Here, the statement \texttt{A(i, j) = 2A(i - 1, j + 3)} has an anti dependence on itself. We supply distance vector \(\begin{bmatrix} < & > \end{bmatrix}\) and direction vector \(\begin{bmatrix} 1 & -3 \end{bmatrix}\).
+\item Let \(S\) be the statement \texttt{A(i) = ...} and \(T\) be the statement \texttt{... = A(j + 1)}. \(T\) has a true dependence on \(S\) with direction vector \(\begin{bmatrix} < & > \end{bmatrix}\) and distance vector \(\begin{bmatrix} 1 & -1 \end{bmatrix}\).
+\item Let \(S\) be the statement \texttt{A(i) = ...} and \(T\) be the statement \texttt{... = A(j + i)}. \(S\) has a loop-independent dependence on \(T\); thus, any direction or distance vector would be vacuous.
+\item By the Theorem of Simple Dependence Testing (Lecture 15, Slides 12-13), the instruction \texttt{A(i, j, i) = 2A(i, j+1, i-1)} has a dependency iff there exists \((i, j) \in I\) s.t. the following are satisfied (they clearly are not):
+\end{itemize}
+\begin{align}
+  i = i \nonumber \\
+  j = j + 1 \nonumber \\
+  i = i - 1 \nonumber
+\end{align}
+
+\section{Assume the given sequential code and assess opportunities for concurrency.}
+\label{sec:orgd33dfc7}
+\begin{itemize}
+\item The supplied table is labelled for each pair of statements \(S_{i}, S_{j}\) with \(\delta^{j}_{k}\) if there is a dependence between \(S_{i}\) and \(S_{j}\). We supply the directed graph \(G\) with vertices \(V = \{v_{i}\}\), where each \(v_{i}\) corresponds to \(S_{i}\); the edge \(e = (v_{i}, v_{j})\) exists with designation supplied from the given table for \((S_{i}, S_{j})\) iff it is non-zero.
+\end{itemize}
+\begin{center}
+\begin{tabular}{llllll}
+ & \(S_{1}\) & \(S_{2}\) & \(S_{3}\) & \(S_{4}\) & \(S_{5}\)\\
+\(S_{1}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\) & \(\delta^{-1}_{1}\) & \(\vec{0}\)\\
+\(S_{2}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\) & \(\delta^{-1}_{1}\) & \(\vec{0}\)\\
+\(S_{3}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\)\\
+\(S_{4}\) & \(\delta_{1}\) & \(\delta_{\infty}\) & \(\delta{1}\) & \(\vec{0}\) & \(\vec{0}\)\\
+\(S_{5}\) & \(\delta_{\inf}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\) & \(\vec{0}\)\\
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item We \emph{condense} the previously-supplied graph, i.e. to maximal strongly-connected substructures, and produce the following vectorization:
+\end{itemize}
+\begin{align*}
+  & S_{3}: A(2:100, 1:100, 1:100) = A(1:99, 1:100, 2:101) + B(2:100, 2:101) * 2 \nonumber \\
+  & \{S_{1}, S_{2}, S_{4}\}: \text{Execute synchronously while preserving iteration space} \nonumber \\
+  & S_{5}: E(2:100) = D(2:100) + 3 \nonumber
+\end{align*}
+\begin{itemize}
+\item With the Advanced vectorization algorithm we obtain the following vectorization:
+\end{itemize}
+\begin{align*}
+  & S_{3}: A(2:100, 1:100, 1:100) = A(1:99, 1:100, 2:101) + B(2:100, 2:101) * 2 \nonumber \\
+  & S_{1}: D(2:100) = 100 \nonumber \\
+  & \{S_{2}, S_{4}\}: \text{Execute synchronously} \nonumber \\
+  & S_{5}: E(2:100) = D(2:100) + 3 \nonumber
+\end{align*}
+We additionally provide the following representation of a graph with two verices in Figure 3. Note that the vertices \(v_{i}\) correspond to the components \(\{S_{1}, S_{3}, S_{5}\}, \{S_{2}, S_{4}\}\) respectively.
+\begin{center}
+\begin{tabular}{lll}
+ & \(v_{1}\) & \(v_{2}\)\\
+\(v_{1}\) & \(\vec{0}\) & \(\vec{0}\)\\
+\(v_{2}\) & \(\delta{1}\) & \(\vec{0}\)\\
+\end{tabular}
+\end{center}
+\section{Desceribe how the given lattice can be used for dependence analysis between procedures.}
+\label{sec:orgceeff9f}
+We supply an algorithm to use \emph{lattice-theoretic} operators to decide whether concurrency can be achieved. Let \(M\) be an oracle machine for the \(\land\) opoerator in some lattice \(L\) that defines the given two-dimensional array. On input of procedures \(a, b\), compute \(c = a \land b\). Finally, \(a, b\) to run concurrently iff no pair of statements from each \(a\) and \(b\) have are dependent; this can be done using a \emph{vectorization} algorithm.
+\end{document}

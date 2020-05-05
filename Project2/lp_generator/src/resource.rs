@@ -45,6 +45,10 @@ mod tests {
     use super::*;
     use serde_xml_rs::from_str;
 
+    // Tests are constructed from
+    // sample XML files provided
+    // in the project.
+
     #[test]
     fn test_single() {
         let s = r##"

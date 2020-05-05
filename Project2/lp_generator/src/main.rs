@@ -5,8 +5,13 @@ use structopt::StructOpt;
 use serde_xml_rs::from_reader;
 use std::error::Error;
 
+use std::io::Write;
+
 mod resource;
 use resource::Resource;
+
+mod kdg;
+use kdg::build_model;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -30,11 +35,13 @@ struct Opt {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let opt = Opt::from_args();
-    // println!("Command-line options are: {:?}", opt);
-
+    let mut opt = Opt::from_args();
     let resource: Resource = from_reader(File::open(&opt.xml)?)?;
-    println!("Resource is: {:#?}", resource);
+
+    opt.app.set_extension("lp");
+    let mut output = File::create(&opt.app)?;
+
+    output.write(build_model(resource, opt.budget)?.as_bytes())?;
 
     Ok(())
 }
